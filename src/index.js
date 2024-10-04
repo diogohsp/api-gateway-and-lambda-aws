@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
+import serverless from "serverless-http";
 
 // Carrega as variáveis de ambiente
 dotenv.config();
@@ -54,3 +55,5 @@ app.listen(port, () => {
   });
   console.log(`App running on port ${port}`);
 });
+
+export const handler = serverless(app);

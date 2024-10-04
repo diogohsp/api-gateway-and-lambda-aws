@@ -1,0 +1,22 @@
+service: my-service
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  environment:
+    CONEXAO_MONGO: ${env:CONEXAO_MONGO} # conexão com MongoDB
+    PORT: ${env:PORT}
+
+functions:
+  app:
+    handler: index.handler # código está em index.js
+    events:
+      - http:
+          path: /
+          method: any
+      - http:
+          path: list
+          method: get
+      - http:
+          path: delete/{id}
+          method: delete
