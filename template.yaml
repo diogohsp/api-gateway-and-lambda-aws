@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda de teste
+
+# Configurações globais
+Globals:
+  Function:
+    Timeout: 60
+
+# Parâmetros do Template
+Parameters:
+  NodeEnv:
+    Type: String
+    Default: desenvolvimento
+    Description: O ambiente em que a função Lambda está rodando
+
+# Recursos e endpoints usados
+Resources:
+  # Definição da API
+  winnersAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      Cors:
+        AllowMethods: "'GET,POST,DELETE'"
+        AllowHeaders: "'Content-Type'"
+        AllowOrigin: "'*'"
+      StageName: v1
+
+  winnersAPIFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri:
+      Handler: src/index.js
+      Runtime: nodejs20.x
+      MemorySize: 1024
+      Timeout: 300
+
+      Environment:
+        Variables:
+          CONEXAO_MONGO: "mongodb+srv://diogo:diogo@cluster0.k4bqc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+      Events:
+        RotaPadrao:
+          Type: Api
+          Properties:
+            RestApiId: !Ref winnersAPI
+            Path: /
+            Method: get
+        ListarWinners:
+          Type: Api
+          Properties:
+            RestApiId: !Ref winnersAPI
+            Path: /winners
+            Method: get
+        CriarWinner:
+          Type: Api
+          Properties:
+            RestApiId: !Ref winnersAPI
+            Path: /winners
+            Method: post
+        EstornarPagamento:
+          Type: Api
+          Properties:
+            RestApiId: !Ref winnersAPI
+            Path: /winners/{id}
+            Method: delete
+
+Outputs:
+  WinnersAPIEndpoint:
+    Description: "Endpoint da API"
+    Value: !Sub "https://${winnersAPI}.execute-api.${AWS::Region}.amazonaws.com/v1/"
+
+  WinnersAPIFunctionArn:
+    Description: "ARN da função Lambda"
+    Value: !GetAtt winnersAPIFunction.Arn
