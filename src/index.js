@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
-const serverless = require("serverless-http");
+// const serverless = require("serverless-http");
 const winnerRoutes = require("./routes/winnerRoutes");
 
 dotenv.config();
@@ -19,8 +19,8 @@ app.get("/", (req, res) => {
 // usando o routes
 app.use("/winners", winnerRoutes);
 
-// app.listen(3000, () => {
-//   console.log("excutando na porta 3000");
-// });
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`excutando na porta ${process.env.PORT || 3000} `);
+});
 
-module.exports.handler = serverless(app);
+// module.exports.handler = serverless(app);
